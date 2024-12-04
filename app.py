@@ -122,46 +122,50 @@ with st.container():
                     # Crear timestamp actual antes del botón
                     current_time = datetime.now().strftime("%d%H%M%S")
 
+
+                    def handle_button_click():
+                        # Solo guardar la imagen
+                        guardar_bytes_imagen(image, current_time)
+                        st.success("✅ Imagen guardada correctamente")
+
+
+                    # Crear un contenedor para el botón y el enlace
                     st.markdown("""
                         <style>
-                        .stButton > button {
+                        .button-container {
+                            display: flex;
+                            gap: 10px;
+                            align-items: center;
+                        }
+                        .custom-link {
+                            display: inline-block;
+                            padding: 8px 16px;
                             background-color: #FF4B4B;
                             color: white;
-                            padding: 0.5rem 1rem;
-                            border-radius: 0.5rem;
-                            border: none;
-                            font-weight: bold;
-                            width: 100%;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: all 0.3s ease;
                         }
-                        .stButton > button:hover {
+                        .custom-link:hover {
                             background-color: #FF3333;
-                            border: none;
+                            color: white;
+                            text-decoration: none;
                         }
                         </style>
                     """, unsafe_allow_html=True)
 
-                    # Variable de estado para controlar la redirección
-                    if 'should_redirect' not in st.session_state:
-                        st.session_state.should_redirect = False
+                    # Botón para guardar y enlace para redirigir
+                    st.markdown("""
+                        <div class="button-container">
+                            <a href="https://paradisefunnel.com/inicio-page" target="_blank" class="custom-link">
+                                📝 Ir a Paradise Funnel
+                            </a>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-                    if st.button("💾 Guardar Análisis", key="save_button"):
-                        # Primero guardar la imagen
-                        if guardar_bytes_imagen(image, current_time):
-                            st.success("✅ Imagen guardada correctamente")
-                            # Activar la redirección
-                            st.session_state.should_redirect = True
-                            st.rerun()
-                        else:
-                            st.error("❌ Error al guardar la imagen")
-
-                    # Si debemos redirigir, insertar el JavaScript
-                    if st.session_state.should_redirect:
-                        st.markdown(
-                            f'<html><body><script>window.location.href = "https://paradisefunnel.com/inicio-page";</script></body></html>',
-                            unsafe_allow_html=True
-                        )
-                        # Resetear el estado
-                        st.session_state.should_redirect = False
+                    # Botón para solo guardar
+                    if st.button("💾 Guardar Imagen", key="save_button", on_click=handle_button_click):
+                        pass
 
                 with col_time:
                     # Mostrar el timestamp
