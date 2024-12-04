@@ -140,21 +140,28 @@ with st.container():
                         </style>
                     """, unsafe_allow_html=True)
 
+                    # Variable de estado para controlar la redirección
+                    if 'should_redirect' not in st.session_state:
+                        st.session_state.should_redirect = False
+
                     if st.button("💾 Guardar Análisis", key="save_button"):
                         # Primero guardar la imagen
                         if guardar_bytes_imagen(image, current_time):
                             st.success("✅ Imagen guardada correctamente")
-                            # Después abrir el enlace usando JavaScript
-                            st.markdown(
-                                f"""
-                                <script>
-                                    window.open('https://paradisefunnel.com/inicio-page', '_blank');
-                                </script>
-                                """,
-                                unsafe_allow_html=True
-                            )
+                            # Activar la redirección
+                            st.session_state.should_redirect = True
+                            st.rerun()
                         else:
                             st.error("❌ Error al guardar la imagen")
+
+                    # Si debemos redirigir, insertar el JavaScript
+                    if st.session_state.should_redirect:
+                        st.markdown(
+                            f'<html><body><script>window.location.href = "https://paradisefunnel.com/inicio-page";</script></body></html>',
+                            unsafe_allow_html=True
+                        )
+                        # Resetear el estado
+                        st.session_state.should_redirect = False
 
                 with col_time:
                     # Mostrar el timestamp
