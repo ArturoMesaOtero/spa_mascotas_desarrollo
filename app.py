@@ -119,49 +119,47 @@ with st.container():
                 col_btn, col_time = st.columns([1, 1])
 
                 with col_btn:
+                    st.markdown("""
+                            <style>
+                            .stButton > button {
+                                background-color: #FF4B4B;
+                                color: white;
+                                padding: 0.5rem 1rem;
+                                border-radius: 0.5rem;
+                                border: none;
+                                font-weight: bold;
+                                width: 100%;
+                            }
+                            .stButton > button:hover {
+                                background-color: #FF3333;
+                                border: none;
+                            }
+                            </style>
+                        """, unsafe_allow_html=True)
+
                     def handle_button_click():
-                        # Solo guardar la imagen
-                        guardar_bytes_imagen(image, current_time)
-                        st.success("✅ Imagen guardada correctamente")
+                        try:
+                            # Guardar la imagen
+                            if guardar_bytes_imagen(image, current_time):
+                                st.success("✅ Imagen guardada correctamente")
+                                # Después abrir el enlace usando JavaScript
+                                st.markdown(
+                                    f"""
+                                        <script>
+                                            window.open('https://paradisefunnel.com/inicio-page', '_blank');
+                                        </script>
+                                        """,
+                                    unsafe_allow_html=True
+                                )
+                            else:
+                                st.error("❌ Error al guardar la imagen")
+                        except Exception as e:
+                            st.error(f"Error: {str(e)}")
 
 
-                    # Crear un contenedor para el botón y el enlace
-                    st.markdown("""
-                        <style>
-                        .button-container {
-                            display: flex;
-                            gap: 10px;
-                            align-items: center;
-                        }
-                        .custom-link {
-                            display: inline-block;
-                            padding: 8px 16px;
-                            background-color: #FF4B4B;
-                            color: white;
-                            text-decoration: none;
-                            border-radius: 5px;
-                            transition: all 0.3s ease;
-                        }
-                        .custom-link:hover {
-                            background-color: #FF3333;
-                            color: white;
-                            text-decoration: none;
-                        }
-                        </style>
-                    """, unsafe_allow_html=True)
-
-                    # Botón para guardar y enlace para redirigir
-                    st.markdown("""
-                        <div class="button-container">
-                            <a href="https://paradisefunnel.com/inicio-page" target="_blank" class="custom-link">
-                                📝 Ir a Paradise Funnel
-                            </a>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-                    # Botón para solo guardar
-                    if st.button("💾 Guardar Imagen", key="save_button", on_click=handle_button_click):
+                    if st.button("📝 Guardar Análisis", key="save_button", on_click=handle_button_click):
                         pass
+                    
 
                 with col_time:
                     # Crear timestamp actual
