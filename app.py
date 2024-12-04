@@ -120,19 +120,47 @@ with st.container():
 
                 with col_btn:
                     def handle_button_click():
-                        try:
-                            # Abrir Google en nueva pestaña
-                            webbrowser.open_new_tab('https://paradisefunnel.com/inicio-page')
-                            # Guardar la imagen
-                            if guardar_bytes_imagen(image, current_time):
-                                st.success("✅ Imagen guardada correctamente")
-                            else:
-                                st.error("❌ Error al guardar la imagen")
-                        except Exception as e:
-                            st.error(f"Error: {str(e)}")
+                        # Solo guardar la imagen
+                        guardar_bytes_imagen(image, current_time)
+                        st.success("✅ Imagen guardada correctamente")
 
 
-                    if st.button("📝 Guardar Análisis", key="save_button", on_click=handle_button_click):
+                    # Crear un contenedor para el botón y el enlace
+                    st.markdown("""
+                        <style>
+                        .button-container {
+                            display: flex;
+                            gap: 10px;
+                            align-items: center;
+                        }
+                        .custom-link {
+                            display: inline-block;
+                            padding: 8px 16px;
+                            background-color: #FF4B4B;
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: all 0.3s ease;
+                        }
+                        .custom-link:hover {
+                            background-color: #FF3333;
+                            color: white;
+                            text-decoration: none;
+                        }
+                        </style>
+                    """, unsafe_allow_html=True)
+
+                    # Botón para guardar y enlace para redirigir
+                    st.markdown("""
+                        <div class="button-container">
+                            <a href="https://paradisefunnel.com/inicio-page" target="_blank" class="custom-link">
+                                📝 Ir a Paradise Funnel
+                            </a>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+                    # Botón para solo guardar
+                    if st.button("💾 Guardar Imagen", key="save_button", on_click=handle_button_click):
                         pass
 
                 with col_time:
