@@ -119,53 +119,45 @@ with st.container():
                 col_btn, col_time = st.columns([1, 1])
 
                 with col_btn:
-                    st.markdown("""
-                            <style>
-                            .stButton > button {
-                                background-color: #FF4B4B;
-                                color: white;
-                                padding: 0.5rem 1rem;
-                                border-radius: 0.5rem;
-                                border: none;
-                                font-weight: bold;
-                                width: 100%;
-                            }
-                            .stButton > button:hover {
-                                background-color: #FF3333;
-                                border: none;
-                            }
-                            </style>
-                        """, unsafe_allow_html=True)
-
-                    def handle_button_click():
-                        try:
-                            # Guardar la imagen
-                            if guardar_bytes_imagen(image, current_time):
-                                st.success("✅ Imagen guardada correctamente")
-                                # Después abrir el enlace usando JavaScript
-                                st.markdown(
-                                    f"""
-                                        <script>
-                                            window.open('https://paradisefunnel.com/inicio-page', '_blank');
-                                        </script>
-                                        """,
-                                    unsafe_allow_html=True
-                                )
-                            else:
-                                st.error("❌ Error al guardar la imagen")
-                        except Exception as e:
-                            st.error(f"Error: {str(e)}")
-
-
-                    if st.button("📝 Guardar Análisis", key="save_button", on_click=handle_button_click):
-                        pass
-                    
-
-                with col_time:
-                    # Crear timestamp actual
+                    # Crear timestamp actual antes del botón
                     current_time = datetime.now().strftime("%d%H%M%S")
 
-                    # Estilo y contenido del timestamp
+                    st.markdown("""
+                        <style>
+                        .stButton > button {
+                            background-color: #FF4B4B;
+                            color: white;
+                            padding: 0.5rem 1rem;
+                            border-radius: 0.5rem;
+                            border: none;
+                            font-weight: bold;
+                            width: 100%;
+                        }
+                        .stButton > button:hover {
+                            background-color: #FF3333;
+                            border: none;
+                        }
+                        </style>
+                    """, unsafe_allow_html=True)
+
+                    if st.button("💾 Guardar Análisis", key="save_button"):
+                        # Primero guardar la imagen
+                        if guardar_bytes_imagen(image, current_time):
+                            st.success("✅ Imagen guardada correctamente")
+                            # Después abrir el enlace usando JavaScript
+                            st.markdown(
+                                f"""
+                                <script>
+                                    window.open('https://paradisefunnel.com/inicio-page', '_blank');
+                                </script>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                        else:
+                            st.error("❌ Error al guardar la imagen")
+
+                with col_time:
+                    # Mostrar el timestamp
                     st.markdown("""
                         <style>
                         .timestamp-box {
