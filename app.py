@@ -7,9 +7,10 @@ from datetime import datetime
 import mysql.connector
 from mysql.connector import Error
 import webbrowser
+import json
 
 
-def guardar_bytes_imagen(imagen, id_unica, analisis):
+def guardar_bytes_imagen(imagen, id_unica, analisis_dict):
     try:
         # Convertir la imagen PIL a bytes
         from io import BytesIO
@@ -21,6 +22,9 @@ def guardar_bytes_imagen(imagen, id_unica, analisis):
         # Obtener los bytes
         img_byte_arr = img_byte_arr.getvalue()
 
+        # Convertir el diccionario de análisis a JSON string
+        comentario_ia = json.dumps(analisis_dict) if analisis_dict else '{}'
+
         conexion = mysql.connector.connect(
             host=st.secrets["mysql"]["MYSQL_HOST"],
             database=st.secrets["mysql"]["MYSQL_DATABASE"],
@@ -30,7 +34,7 @@ def guardar_bytes_imagen(imagen, id_unica, analisis):
 
         cursor = conexion.cursor()
         sql = "INSERT INTO spa_historico (foto, id_unica, comentario_ia) VALUES (%s, %s, %s)"
-        cursor.execute(sql, (img_byte_arr, id_unica, analisis))
+        cursor.execute(sql, (img_byte_arr, id_unica, comentario_ia))
         conexion.commit()
 
         print(f"Imagen guardada con éxito. ID: {cursor.lastrowid}")
