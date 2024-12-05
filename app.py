@@ -9,7 +9,7 @@ from mysql.connector import Error
 import webbrowser
 
 
-def guardar_bytes_imagen(imagen, id_unica):
+def guardar_bytes_imagen(imagen, id_unica, analisis):
     try:
         # Convertir la imagen PIL a bytes
         from io import BytesIO
@@ -29,8 +29,8 @@ def guardar_bytes_imagen(imagen, id_unica):
         )
 
         cursor = conexion.cursor()
-        sql = "INSERT INTO spa_historico (foto, id_unica) VALUES (%s, %s)"
-        cursor.execute(sql, (img_byte_arr, id_unica))
+        sql = "INSERT INTO spa_historico (foto, id_unica, comentario_ia) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (img_byte_arr, id_unica, analisis))
         conexion.commit()
 
         print(f"Imagen guardada con éxito. ID: {cursor.lastrowid}")
@@ -79,7 +79,10 @@ st.markdown("""
 # Inicializar el procesador de imágenes
 if 'image_processor' not in st.session_state:
     st.session_state.image_processor = ImageProcessor()
-
+if 'id_time' not in st.session_state:
+    st.session_state.current_time = None
+else:
+    print(f"*** {st.session_state.current_time}")
 # Título con estilo
 st.markdown("""
     <h1 style='text-align: center; color: #FF4B4B; margin-bottom: 2rem;'>
@@ -95,9 +98,11 @@ with st.container():
     with col1:
         image = camera_component()
 
-    if image is not None:
+    print(f"--- {st.session_state.current_time}")
+    if image is not None and st.session_state.current_time is None:
+        st.session_state.current_time = datetime.now().strftime("%d%H%M%S")
         with col2:
-            st.image(image, caption="Foto capturada", use_column_width=True)
+            st.image(image, caption="Foto capturada", use_container_width=True)
 
         # Análisis de la imagen con OpenAI
         with st.spinner('Analizando la imagen con IA...'):
@@ -120,13 +125,17 @@ with st.container():
 
                 with col_btn:
                     # Crear timestamp actual antes del botón
-                    current_time = datetime.now().strftime("%d%H%M%S")
+                    #st.session_state.current_time = datetime.now().strftime("%d%H%M%S")
 
 
                     def handle_button_click():
                         # Solo guardar la imagen
-                        guardar_bytes_imagen(image, current_time)
-                        st.success("✅ Imagen guardada correctamente")
+                        if st.session_state.current_time and image:
+                            success = guardar_bytes_imagen(image, st.session_state.current_time, analysis)
+                            if success:
+                                st.session_state.save_success = True
+                            else:
+                                st.session_state.save_error = True
 
 
                     # Crear un contenedor para el botón y el enlace
@@ -166,7 +175,13 @@ with st.container():
                     # Botón para solo guardar
                     if st.button("💾 Guardar Imagen", key="save_button", on_click=handle_button_click):
                         pass
-
+                    # Mostrar mensajes de éxito/error
+                    if getattr(st.session_state, 'save_success', False):
+                        st.success(f"✅ Imagen guardada correctamente con ID: {st.session_state.current_time}")
+                        st.session_state.save_success = False  # Resetear para el siguiente uso
+                    elif getattr(st.session_state, 'save_error', False):
+                        st.error("❌ Error al guardar la imagen")
+                        st.session_state.save_error = False  # Resetear para el siguiente uso
                 with col_time:
                     # Mostrar el timestamp
                     st.markdown("""
@@ -187,6 +202,6 @@ with st.container():
                     """, unsafe_allow_html=True)
 
                     st.markdown(
-                        f'<div class="timestamp-box">{current_time}</div>',
+                        f'<div class="timestamp-box">{st.session_state.current_time}</div>',
                         unsafe_allow_html=True
                     )

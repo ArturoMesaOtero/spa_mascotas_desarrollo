@@ -27,5 +27,6 @@ def camera_component():
 
     img_file_buffer = st.camera_input("📸 Toma una foto", key="camera")
     if img_file_buffer is not None:
+        st.session_state.current_time = None  # Reset del timestamp
         return Image.open(img_file_buffer)
     return None
