@@ -1,5 +1,4 @@
 import time
-
 import streamlit as st
 from components.camera import camera_component
 from components.video_player import video_player
@@ -7,7 +6,6 @@ from utils.image_processor import ImageProcessor
 from datetime import datetime
 import mysql.connector
 from mysql.connector import Error
-import webbrowser
 import json
 
 
@@ -67,6 +65,8 @@ if 'analysis_complete' not in st.session_state:
     st.session_state.analysis_complete = False
 if 'current_time' not in st.session_state:
     st.session_state.current_time = None
+if 'modal_confirmed' not in st.session_state:
+    st.session_state.modal_confirmed = False
 
 # Estilos globales
 st.markdown("""
@@ -88,6 +88,23 @@ st.markdown("""
     .stButton>button:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+        /* Estilos para el modal */
+    .custom-modal {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .modal-time {
+        font-size: 24px;
+        font-weight: bold;
+        color: #FF4B4B;
+        text-align: center;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #f8f9fa;
+        border-radius: 5px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -137,6 +154,23 @@ with st.container():
                 st.markdown("### 🎥 Video Informativo")
                 video_player(analysis)
 
+                # Añadir un espaciado después del video
+                st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    # Carga la primera imagen
+                    st.image("imagenes/spa_img_1.jpg",
+                             use_container_width=True)
+
+                with col2:
+                    # Carga la segunda imagen
+                    st.image("imagenes/spa_img_4.jpg",
+                             use_container_width=True)
+
+                # Añadir un espaciado después de las imágenes
+                st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
+
                 if st.session_state.current_time is None:
                     st.session_state.current_time = datetime.now().strftime("%d%H%M%S")
 
@@ -155,14 +189,71 @@ with st.container():
                     )
 
                 with col3:
-                    if st.button("🔄 Guardar"):
-                        with st.spinner("Guardando imagen..."):
-                            if guardar_bytes_imagen(st.session_state.image, st.session_state.current_time, analysis):
-                                st.success("✅ Imagen guardada correctamente")
-                                time.sleep(1)  # Dar tiempo para ver el mensaje
-                                st.session_state.image = None
-                                st.session_state.analysis_complete = False
-                                st.session_state.current_time = None
-                                st.rerun()
-                            else:
-                                st.error("❌ Error al guardar la imagen")
+                    if 'show_confirmation' not in st.session_state:
+                        st.session_state.show_confirmation = False
+
+                    if st.button("🔄 Guardar", use_container_width=True):
+                        st.session_state.show_confirmation = True
+
+                    if st.session_state.show_confirmation:
+                        with st.container():
+                            st.markdown(f"""
+                                <style>
+                                    .main-container {{
+                                        background-color: white;
+                                        padding: 20px;
+                                        border-radius: 10px;
+                                        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                                        margin: 10px 0;
+                                    }}
+                                    .info-box {{
+                                        font-size: 1.3rem;
+                                        text-align: center;
+                                        padding: 10px;
+                                        margin: 10px 0;
+                                        background-color: #f8f9fa;
+                                        border-radius: 5px;
+                                        border: 1px solid #ddd;
+                                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                    }}
+                                    .timestamp-box {{
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        color: #FF4B4B;
+                                        text-align: center;
+                                        padding: 10px;
+                                        margin: 10px 0;
+                                        background-color: #f8f9fa;
+                                        border-radius: 5px;
+                                        border: 1px solid #ddd;
+                                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                    }}
+                                </style>
+
+                                <div class='main-container'>
+                                    <div class='info-box'>
+                                        ¿Has copiado el código?
+                                    </div>
+                                    <div class='timestamp-box'>
+                                        {st.session_state.current_time}
+                                    </div>
+                                </div>
+                            """, unsafe_allow_html=True)
+
+                            # Solo un botón centrado
+                            col1, col2, col3 = st.columns([1, 2, 1])
+                            with col2:
+                                if st.button("➡️ Siguiente", key="siguiente_btn", use_container_width=True):
+                                    with st.spinner("Guardando imagen..."):
+                                        if guardar_bytes_imagen(st.session_state.image, st.session_state.current_time,
+                                                                analysis):
+                                            st.success("✅ Imagen guardada correctamente")
+                                            time.sleep(1)
+                                            st.session_state.image = None
+                                            st.session_state.analysis_complete = False
+                                            st.session_state.current_time = None
+                                            st.session_state.show_confirmation = False
+                                            st.rerun()
+                                        else:
+                                            st.error("❌ Error al guardar la imagen")
+                                            st.session_state.show_confirmation = False
