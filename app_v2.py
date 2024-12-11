@@ -73,7 +73,8 @@ def conexion_crm(id_unica, nombre1, telefono1, codigo_postal1, apellidos1, email
                 {
                     "id": "poSgpBDHkFYfejW4TrfO",
                     "value": nombre_mascota1
-                }
+                },
+                {"id": "L00DtLnGeNYpBerTbLp2", "value": "app"}
             ]
         }
 
