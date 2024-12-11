@@ -68,7 +68,7 @@ def conexion_crm(id_unica, nombre1, telefono1, codigo_postal1, apellidos1, email
 
         # Encabezados de la solicitud, incluyendo la clave API
         headers = {
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2NhdGlvbl9pZCI6Ik81anlBbTA2NTNYN2R2cFVYVmlzIiwiY29tcGFueV9pZCI6IlEyNmFKREZDYTd5emNpYVpjYUF1IiwidmVyc2lvbiI6MSwiaWF0IjoxNzA3MTMxMTc4Mzk1LCJzdWIiOiJ1c2VyX2lkIn0.8Jn49GEUwERtqoEPjrntBW5PLTuPTaJDznUk834nYfU',
+            'Authorization': st.secrets["crm"]["Authorization_key"],
             'Content-Type': 'application/json'
         }
 
@@ -84,7 +84,6 @@ def conexion_crm(id_unica, nombre1, telefono1, codigo_postal1, apellidos1, email
     except Error as e:
         print(f"Error: {e}")
         return False
-
 
 # Configuración de la página
 st.set_page_config(
