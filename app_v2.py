@@ -61,9 +61,20 @@ def conexion_crm(id_unica, nombre1, telefono1, codigo_postal1, apellidos1, email
         # Datos del nuevo contacto
         data = {
             "firstName": nombre1,
-            "lastName": apellidos1 + "[" + id_unica + "," + codigo_postal1 + "," + nombre_mascota1 + "]",
+            "lastName": apellidos1,
             "email": email1,
-            "phone": telefono1
+            "phone": telefono1,
+            "postalCode": codigo_postal1,
+            "customField": [
+                {
+                    "id": "pmz7QHC0TqeAjuwNoUjJ",
+                    "value": id_unica
+                },
+                {
+                    "id": "poSgpBDHkFYfejW4TrfO",
+                    "value": nombre_mascota1
+                }
+            ]
         }
 
         # Encabezados de la solicitud, incluyendo la clave API
