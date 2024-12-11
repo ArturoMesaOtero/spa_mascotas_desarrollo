@@ -253,7 +253,7 @@ with st.container():
                         text-decoration: none;
                     }
                     </style>
-                    <a href="https://paradisefunnel.com/inicio-page" target="_blank" class="streamlit-button">
+                    <a href="https://dyyp.es/inicio-page" target="_blank" class="streamlit-button">
                         📝 Ir a Paradise Funnel
                     </a>
                 """, unsafe_allow_html=True)
@@ -372,7 +372,7 @@ with st.container():
                                 text-decoration: none;
                             }
                             </style>
-                            <a href="https://paradisefunnel.com/inicio-page" target="_blank" class="streamlit-button">
+                            <a href="https://dyyp.es/inicio-page" target="_blank" class="streamlit-button">
                                 📝 Condiciones del sorteo
                             </a>
                         """, unsafe_allow_html=True)
